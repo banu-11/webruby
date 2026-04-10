@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Course Registration</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    form {
+      background: white;
+      padding: 25px;
+      width: 380px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2 { text-align: center; }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
+    }
+
+    .item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 5px 0;
+    }
+
+    input[type="text"], select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+    }
+
+    .btns {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+    }
+
+    button {
+      width: 48%;
+      padding: 10px;
+    }
+
+    .error { color: red; }
+    .success { color: green; }
+  </style>
+</head>
+
+<body>
+
+<form onsubmit="return submitForm()">
+
+  <h2>Course Registration</h2>
+
+  <!-- Name -->
+  <label>Name:</label>
+  <input type="text" id="name">
+
+  <!-- Courses -->
+  <label>Select Courses:</label>
+  <div class="item"><input type="checkbox" value="3"> Math (3 credits)</div>
+  <div class="item"><input type="checkbox" value="4"> Science (4 credits)</div>
+  <div class="item"><input type="checkbox" value="2"> English (2 credits)</div>
+  <div class="item"><input type="checkbox" value="3"> Computer (3 credits)</div>
+
+  <!-- Semester -->
+  <label>Semester:</label>
+  <div class="item"><input type="radio" name="sem" value="Fall"> Fall</div>
+  <div class="item"><input type="radio" name="sem" value="Winter"> Winter</div>
+  <div class="item"><input type="radio" name="sem" value="Spring"> Spring</div>
+
+  <!-- Conditional -->
+  <div id="timingBox" style="display:none;">
+    <label>Preferred Timing:</label>
+    <select id="timing">
+      <option value="">Select</option>
+      <option>Morning</option>
+      <option>Afternoon</option>
+    </select>
+  </div>
+
+  <p><b>Total Credits: <span id="total">0</span></b></p>
+
+  <div class="btns">
+    <button type="submit">Submit</button>
+    <button type="reset">Reset</button>
+  </div>
+
+  <p id="msg"></p>
+
+</form>
+
+<script>
+  let checkboxes = document.querySelectorAll("input[type=checkbox]");
+  let radios = document.querySelectorAll("input[name=sem]");
+
+  checkboxes.forEach(cb => cb.addEventListener("change", calc));
+
+  radios.forEach(r => r.addEventListener("change", () => {
+    toggleTiming(r.value);
+  }));
+
+  function calc() {
+    let total = 0;
+    checkboxes.forEach(cb => {
+      if (cb.checked) total += parseInt(cb.value);
+    });
+    document.getElementById("total").innerText = total;
+  }
+
+  function toggleTiming(sem) {
+    document.getElementById("timingBox").style.display =
+      (sem === "Fall") ? "block" : "none";
+  }
+
+  function submitForm() {
+    let msg = document.getElementById("msg");
+    msg.innerHTML = "";
+
+    let name = document.getElementById("name").value;
+    let total = document.getElementById("total").innerText;
+
+    if (name.length < 2) {
+      msg.innerHTML = "Enter valid name";
+      msg.className = "error";
+      return false;
+    }
+
+    let selectedCourses = document.querySelectorAll("input[type=checkbox]:checked");
+    if (selectedCourses.length == 0) {
+      msg.innerHTML = "Select at least one course";
+      msg.className = "error";
+      return false;
+    }
+
+    let sem = document.querySelector("input[name=sem]:checked");
+    if (!sem) {
+      msg.innerHTML = "Select semester";
+      msg.className = "error";
+      return false;
+    }
+
+    if (sem.value === "Fall") {
+      let timing = document.getElementById("timing").value;
+      if (timing == "") {
+        msg.innerHTML = "Select preferred timing";
+        msg.className = "error";
+        return false;
+      }
+    }
+
+    // AJAX Simulation
+    setTimeout(() => {
+      if (Math.random() > 0.3) {
+        msg.innerHTML = "Registration Successful! Total Credits: " + total;
+        msg.className = "success";
+      } else {
+        msg.innerHTML = "Registration Failed!";
+        msg.className = "error";
+      }
+    }, 800);
+
+    return false;
+  }
+</script>
+
+</body>
+</html>
