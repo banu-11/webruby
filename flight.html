@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Flight Booking System</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    form {
+      background: white;
+      padding: 25px;
+      width: 350px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    input[type="text"],
+    select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+    }
+
+    .inline {
+      display: flex;
+      align-items: center;
+      margin: 5px 0;
+      gap: 10px;
+    }
+
+    button {
+      padding: 10px;
+      margin-top: 10px;
+      width: 48%;
+    }
+
+    .btns {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .error { color: red; }
+    .success { color: green; }
+  </style>
+</head>
+
+<body>
+
+<form onsubmit="return validateForm()">
+
+  <h2>Flight Booking</h2>
+
+  <label>Name:</label>
+  <input type="text" id="name">
+
+  <label>Destination:</label>
+  <div class="inline"><input type="checkbox" value="500"> New York</div>
+  <div class="inline"><input type="checkbox" value="600"> London</div>
+  <div class="inline"><input type="checkbox" value="700"> Tokyo</div>
+
+  <label>Class:</label>
+  <div class="inline"><input type="radio" name="class" value="1"> Economy</div>
+  <div class="inline"><input type="radio" name="class" value="1.5"> Business</div>
+  <div class="inline"><input type="radio" name="class" value="2"> First</div>
+
+  <div id="seat" style="display:none;">
+    <label>Seat:</label>
+    <select id="seatPref">
+      <option value="">Select</option>
+      <option>Window</option>
+      <option>Aisle</option>
+    </select>
+  </div>
+
+  <p><b>Total Price: ₹<span id="price">0</span></b></p>
+
+  <div class="btns">
+    <button type="submit">Submit</button>
+    <button type="reset">Reset</button>
+  </div>
+
+  <p id="msg"></p>
+
+</form>
+
+<script>
+  let checkboxes = document.querySelectorAll("input[type=checkbox]");
+  let radios = document.querySelectorAll("input[name=class]");
+
+  checkboxes.forEach(cb => cb.addEventListener("change", calc));
+  radios.forEach(r => r.addEventListener("change", () => {
+    calc();
+    toggleSeat(r.value);
+  }));
+
+  function calc() {
+    let total = 0;
+
+    checkboxes.forEach(cb => {
+      if (cb.checked) total += parseInt(cb.value);
+    });
+
+    let selected = document.querySelector("input[name=class]:checked");
+    let mul = selected ? selected.value : 1;
+
+    document.getElementById("price").innerText = total * mul;
+  }
+
+  function toggleSeat(val) {
+    document.getElementById("seat").style.display = (val > 1) ? "block" : "none";
+  }
+
+  function validateForm() {
+    let name = document.getElementById("name").value;
+    let msg = document.getElementById("msg");
+
+    msg.innerHTML = "";
+
+    if (name.length < 2) {
+      msg.innerHTML = "Enter valid name";
+      msg.className = "error";
+      return false;
+    }
+
+    let dest = document.querySelectorAll("input[type=checkbox]:checked");
+    if (dest.length == 0) {
+      msg.innerHTML = "Select destination";
+      msg.className = "error";
+      return false;
+    }
+
+    let cls = document.querySelector("input[name=class]:checked");
+    if (!cls) {
+      msg.innerHTML = "Select class";
+      msg.className = "error";
+      return false;
+    }
+
+    if (cls.value > 1) {
+      let seat = document.getElementById("seatPref").value;
+      if (seat == "") {
+        msg.innerHTML = "Select seat";
+        msg.className = "error";
+        return false;
+      }
+    }
+
+    msg.innerHTML = "Booking Successful!";
+    msg.className = "success";
+    return false;
+  }
+</script>
+
+</body>
+</html>
