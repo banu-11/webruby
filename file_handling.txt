@@ -1,0 +1,37 @@
+File.open("data.txt", "w") do |file|
+  file.puts "Hello Ruby"
+  file.puts "File handling example"
+end
+
+File.open("data.txt", "r") do |file|
+  content = file.read
+  puts content
+end
+
+File.open("data.txt", "a") do |file|
+  file.puts "New line added"
+end
+
+# Write
+File.open("students.txt", "w") do |file|
+  file.puts "Banu 90"
+  file.puts "Ravi 75"
+end
+
+# Read
+File.open("students.txt", "r") do |file|
+  file.each_line do |line|
+    name, score = line.split
+    puts "Name: #{name}, Score: #{score}"
+  end
+end
+
+File.open("input.txt", "w") do |file|
+  puts "Enter name:"
+  name = gets.chomp
+
+  puts "Enter marks:"
+  marks = gets.chomp
+
+  file.puts "#{name} #{marks}"
+end
