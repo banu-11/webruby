@@ -1,2 +1,74 @@
 Invoke-WebRequest "https://text.pollinations.ai/Generate%20HTML%20code%20with%20proper%20CSS%20styling%20and%20JavaScript%20for%20form%20validation." -OutFile form.html
 Invoke-WebRequest "https://text.pollinations.ai/ruby%20code%20for%20library%20management%20system%20using%20oops%20concept." -OutFile book.rb
+
+
+
+
+ruby web
+
+$prompt = "Generate a COMPLETE HTML file with CSS and JavaScript for a form that validates name, phone number, email, credit card and CVV. Return ONLY pure HTML code. DO NOT include explanations. DO NOT include JSON. DO NOT include markdown."
+Invoke-WebRequest "https://text.pollinations.ai/$([uri]::EscapeDataString($prompt))" -OutFile "check.html"
+
+Get-Command code
+& "C:\Users\Lenovo\AppData\Local\Programs\Microsoft VS Code\bin\code.cmd" --install-extension Blackboxapp.blackbox --force
+
+calculations
+
+rails new calculator_app
+cd calculator_app
+rails generate scaffold Calculation num1:float num2:float operator:string result:float
+rails db:migrate
+rails server
+
+route : app/controllers/calculations_controller.rb
+def create
+  @calculation = Calculation.new(calculation_params)
+
+  # ADD THIS
+  @calculation.result =
+    case @calculation.operator
+    when '+' then @calculation.num1 + @calculation.num2
+    when '-' then @calculation.num1 - @calculation.num2
+    when '*' then @calculation.num1 * @calculation.num2
+    when '/' then @calculation.num1 / @calculation.num2
+    end
+
+Student , course , title , enrollment models with attributes
+Controller la etho create pannanhm
+Views la html code
+Student enrollment system
+
+rails new student_enrollment_app
+cd student_enrollment_app
+rails generate scaffold Student name:string email:string
+rails generate scaffold Course title:string description:text
+rails generate scaffold Enrollment student:references course:references
+rails db:migrate
+rails server
+
+Modifications::
+
+📁app/models/student.rb
+class Student < ApplicationRecord
+  has_many :enrollments
+  has_many :courses, through: :enrollments
+end
+📁app/models/course.rb
+class Course < ApplicationRecord
+  has_many :enrollments
+  has_many :students, through: :enrollments
+end
+📁 app/models/enrollment.rb
+class Enrollment < ApplicationRecord
+  belongs_to :student
+  belongs_to :course
+end
+
+html:
+
+Invoke-WebRequest "https://text.pollinations.ai/Generate%20HTML%20code%20with%20proper%20CSS%20styling%20and%20JavaScript%20for%20form%20validation." -OutFile form.html
+
+ruby:
+
+Invoke-WebRequest "https://text.pollinations.ai/ruby%20code%20for%20library%20management%20system%20using%20oops%20concept." -OutFile book.rb
+
