@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FAQ</title>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <style>
+    body {
+      font-family: Arial;
+      margin: 40px;
+    }
+
+    .faq {
+      width: 400px;
+      margin: auto;
+    }
+
+    .question {
+      background: #3498db;
+      color: white;
+      padding: 10px;
+      margin-top: 5px;
+      cursor: pointer;
+    }
+
+    .answer {
+      display: none;
+      padding: 10px;
+      background: #ecf0f1;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="faq">
+  <div class="question">What is HTML?</div>
+  <div class="answer">HTML is used to create web pages.</div>
+
+  <div class="question">What is CSS?</div>
+  <div class="answer">CSS is used for styling.</div>
+
+  <div class="question">What is jQuery?</div>
+  <div class="answer">jQuery is a JavaScript library.</div>
+</div>
+
+<script>
+  $(".question").click(function () {
+    let answer = $(this).next();
+
+    if (answer.is(":visible")) {
+      answer.slideUp();
+    } else {
+      $(".answer").slideUp(); // close all
+      answer.slideDown();     // open clicked
+    }
+  });
+</script>
+
+</body>
+</html>
+
+
+
+# Parent Class
+class Person
+  attr_accessor :name, :age
+
+  def initialize(name, age)
+    @name = name
+    @age = age
+  end
+
+  def display
+    puts "Name: #{@name}, Age: #{@age}"
+  end
+end
+
+# Child Class - Student
+class Student < Person
+  attr_accessor :student_id
+
+  def initialize(name, age, student_id)
+    super(name, age)
+    @student_id = student_id
+  end
+
+  # Method Overriding
+  def display
+    puts "Student Name: #{@name}, Age: #{@age}, ID: #{@student_id}"
+  end
+end
+
+# Child Class - Teacher
+class Teacher < Person
+  attr_accessor :subject
+
+  def initialize(name, age, subject)
+    super(name, age)
+    @subject = subject
+  end
+
+  # Method Overriding
+  def display
+    puts "Teacher Name: #{@name}, Age: #{@age}, Subject: #{@subject}"
+  end
+end
+
+# Objects
+s = Student.new("Banu", 20, "S101")
+t = Teacher.new("Ravi", 40, "Math")
+
+s.display
+t.display
