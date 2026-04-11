@@ -1,0 +1,65 @@
+STEP 1: Create Project
+rails new education_app
+cd education_app
+ STEP 2: Generate Models (Scaffold = CRUD done)
+rails generate scaffold Student name:string email:string
+rails generate scaffold Course name:string instructor:string
+rails generate scaffold Lesson name:string description:text course:references
+rails generate scaffold Enrollment student:references course:references
+ STEP 3: Migrate
+rails db:migrate
+ STEP 4: Define Relationships (VERY IMPORTANT)
+ app/models/student.rb
+class Student < ApplicationRecord
+  has_many :enrollments
+  has_many :courses, through: :enrollments
+end
+ app/models/course.rb
+class Course < ApplicationRecord
+  has_many :enrollments
+  has_many :students, through: :enrollments
+  has_many :lessons, dependent: :destroy
+end
+ app/models/lesson.rb
+class Lesson < ApplicationRecord
+  belongs_to :course
+end
+ app/models/enrollment.rb
+class Enrollment < ApplicationRecord
+  belongs_to :student
+  belongs_to :course
+
+  #  Prevent duplicate enrollment
+  validates :student_id, uniqueness: { scope: :course_id,
+    message: "already enrolled in this course" }
+end
+ STEP 5: Display Students, Courses, Lessons
+ Students
+http://localhost:3000/students
+ Courses
+http://localhost:3000/courses
+ Lessons
+http://localhost:3000/lessons
+ STEP 6: Enrollment Success / Failure Message
+
+ Edit:
+ app/controllers/enrollments_controller.rb
+
+def create
+  @enrollment = Enrollment.new(enrollment_params)
+
+  if @enrollment.save
+    redirect_to @enrollment, notice: "Enrollment successful"
+  else
+    redirect_to new_enrollment_path, alert: @enrollment.errors.full_messages.join(", ")
+  end
+end
+ STEP 7: Show Lessons in Course
+
+Edit:
+app/views/courses/show.html.erb
+
+<h3>Lessons:</h3>
+<% @course.lessons.each do |lesson| %>
+  <p><%= lesson.name %> - <%= lesson.description %></p>
+<% end %>
