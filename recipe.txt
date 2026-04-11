@@ -1,0 +1,44 @@
+STEP 1: Create Project
+rails new recipe_app
+cd recipe_app
+STEP 2: Generate ALL scaffolds (single flow)
+rails generate scaffold User name:string email:string
+rails generate scaffold Recipe title:string ingredients:text user:references
+rails generate scaffold Comment title:string user:references recipe:references
+STEP 3: Migrate
+rails db:migrate
+ STEP 4: Add Associations (ONLY EDIT REQUIRED)
+
+ app/models/user.rb
+
+has_many :recipes
+has_many :comments
+
+app/models/recipe.rb
+
+belongs_to :user
+has_many :comments, dependent: :destroy
+
+ app/models/comment.rb
+
+belongs_to :user
+belongs_to :recipe
+STEP 5: Show Comments in Recipe (IMPORTANT LINE)
+
+ Open:
+
+app/views/recipes/show.html.erb
+
+ Add at bottom:
+
+<h3>Comments:</h3>
+<% @recipe.comments.each do |comment| %>
+  <p><%= comment.title %> - by <%= comment.user.name %></p>
+<% end %>
+STEP 6: Run Server
+rails server
+ DONE 
+
+Open browser:
+
+http://localhost:3000/recipes
