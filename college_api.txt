@@ -1,0 +1,144 @@
+STEP 1: Create API Project
+rails new college_api --api
+cd college_api
+ STEP 2: Generate Scaffold
+rails generate scaffold Student name:string email:string course:string year_of_study:integer
+ STEP 3: Run Migration
+rails db:migrate
+STEP 4: Move Controller to API Folder
+
+ Create folder:
+
+mkdir app/controllers/api
+
+ Move file:
+
+mv app/controllers/students_controller.rb app/controllers/api/students_controller.rb
+ STEP 5: Update Controller (VERY IMPORTANT)
+
+Open:
+
+app/controllers/api/students_controller.rb
+
+ Replace FULL code with:
+
+module Api
+  class StudentsController < ApplicationController
+    before_action :set_student, only: [:show, :update, :destroy]
+
+    def index
+      students = Student.all
+      render json: students, status: 200
+    end
+
+    def show
+      render json: @student, status: 200
+    end
+
+    def create
+      student = Student.new(student_params)
+      if student.save
+        render json: student, status: 201
+      else
+        render json: { errors: student.errors.full_messages }, status: 422
+      end
+    end
+
+    def update
+      if @student.update(student_params)
+        render json: @student, status: 200
+      else
+        render json: { errors: @student.errors.full_messages }, status: 422
+      end
+    end
+
+    def destroy
+      @student.destroy
+      render json: { message: "Student deleted successfully" }, status: 200
+    end
+
+    def search
+      if params[:course]
+        students = Student.where(course: params[:course])
+        render json: students, status: 200
+      else
+        render json: { error: "Course parameter missing" }, status: 400
+      end
+    end
+
+    private
+
+    def set_student
+      @student = Student.find_by(id: params[:id])
+      render json: { error: "Student not found" }, status: 404 unless @student
+    end
+
+    def student_params
+      params.permit(:name, :email, :course, :year_of_study)
+    end
+  end
+end
+ STEP 6: Update Model (Validation)
+
+Open:
+
+app/models/student.rb
+class Student < ApplicationRecord
+  validates :name, presence: true
+  validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
+  validates :course, presence: true
+  validates :year_of_study, presence: true
+end
+ STEP 7: Update Routes
+
+Open:
+
+config/routes.rb
+Rails.application.routes.draw do
+  namespace :api do
+    resources :students do
+      collection do
+        get 'search'
+      end
+    end
+  end
+end
+ STEP 8: Start Server
+rails server
+ STEP 9: Test in Postman
+ 1. Create Student
+
+POST
+
+http://localhost:3000/api/students
+{
+  "name": "Banu",
+  "email": "banu@gmail.com",
+  "course": "ECE",
+  "year_of_study": 3
+}
+2. Get All Students
+
+GET
+
+http://localhost:3000/api/students
+ 3. Get Student by ID
+
+GET
+
+http://localhost:3000/api/students/1
+ 4. Update Student
+
+PUT
+
+http://localhost:3000/api/students/1
+ 5. Delete Student
+
+DELETE
+
+http://localhost:3000/api/students/1
+ 6. Search by Course
+
+GET
+
+http://localhost:3000/api/students/search?course=ECE
