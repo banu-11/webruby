@@ -1,0 +1,59 @@
+STEP 1: Create Controller
+rails generate controller conversions
+ STEP 2: Add Route
+
+config/routes.rb
+
+Rails.application.routes.draw do
+  post '/convert_unit', to: 'conversions#convert'
+end
+ STEP 3: Controller Code
+
+app/controllers/conversions_controller.rb
+
+class ConversionsController < ApplicationController
+  def convert
+    value = params[:value].to_f
+    from = params[:from_unit]
+    to = params[:to_unit]
+
+    # Validation
+    if value <= 0 || from.nil? || to.nil?
+      return render json: { error: "Invalid input" }, status: 400
+    end
+
+    result = case [from, to]
+    when ["meter", "kilometer"]
+      value / 1000.0
+    when ["gram", "kilogram"]
+      value / 1000.0
+    else
+      return render json: { error: "Conversion not supported" }, status: 422
+    end
+
+    render json: {
+      input_value: value,
+      from_unit: from,
+      to_unit: to,
+      result: result
+    }, status: 200
+  end
+end
+ STEP 4: Start Server
+rails server
+STEP 5: Test in Postman
+URL
+POST http://localhost:3000/convert_unit
+RAW JSON
+{
+  "value": 1000,
+  "from_unit": "meter",
+  "to_unit": "kilometer"
+}
+ OUTPUT
+{
+  "input_value": 1000.0,
+  "from_unit": "meter",
+  "to_unit": "kilometer",
+  "result": 1.0
+}
