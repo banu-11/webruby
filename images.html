@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Overlapping Images</title>
+
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+    }
+
+    .container {
+      position: relative;
+      width: 500px;
+      height: 300px;
+    }
+
+    .container img {
+      position: absolute;
+      width: 200px;
+      height: 150px;
+      transition: transform 0.3s, z-index 0.3s;
+      cursor: pointer;
+      border: 2px solid black;
+    }
+
+    /* Overlapping positions */
+    .img1 { top: 0; left: 0; }
+    .img2 { top: 50px; left: 100px; }
+    .img3 { top: 100px; left: 200px; }
+
+    /* Hover effect */
+    .container img:hover {
+      transform: scale(1.3);
+      z-index: 10;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <img src="https://via.placeholder.com/200x150/ff6666" class="img1">
+  <img src="https://via.placeholder.com/200x150/66ff66" class="img2">
+  <img src="https://via.placeholder.com/200x150/6666ff" class="img3">
+</div>
+
+</body>
+</html>
