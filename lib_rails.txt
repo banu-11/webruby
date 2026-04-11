@@ -1,0 +1,67 @@
+STEP 1: Create Project
+rails new library_app
+cd library_app
+ STEP 2: Generate Scaffolds
+rails generate scaffold Book title:string author:string available:boolean
+rails generate scaffold Borrower name:string email:string
+rails generate scaffold Borrowing book:references borrower:references borrowed_on:date return_date:date
+ STEP 3: Run Migration
+rails db:migrate
+ STEP 4: Add Associations (IMPORTANT)
+ app/models/book.rb
+class Book < ApplicationRecord
+  has_many :borrowings
+  has_many :borrowers, through: :borrowings
+end
+ app/models/borrower.rb
+class Borrower < ApplicationRecord
+  has_many :borrowings
+  has_many :books, through: :borrowings
+end
+ app/models/borrowing.rb
+class Borrowing < ApplicationRecord
+  belongs_to :book
+  belongs_to :borrower
+end
+ STEP 5: Show Available Books
+
+ Edit:
+ app/views/books/index.html.erb
+
+<h1>Available Books</h1>
+
+<% @books.each do |book| %>
+  <% if book.available %>
+    <p>
+      <%= book.title %> by <%= book.author %>
+    </p>
+  <% end %>
+<% end %>
+ STEP 6: Borrow Book (Simple Logic)
+
+ Edit:
+ app/controllers/borrowings_controller.rb
+
+def create
+  @borrowing = Borrowing.new(borrowing_params)
+
+  if @borrowing.save
+    @borrowing.book.update(available: false)  # mark as borrowed
+    redirect_to books_path, notice: "Book borrowed successfully"
+  else
+    render :new
+  end
+end
+STEP 7: Return Book (Optional Bonus)
+def destroy
+  @borrowing = Borrowing.find(params[:id])
+  @borrowing.book.update(available: true)
+  @borrowing.destroy
+  redirect_to books_path, notice: "Book returned"
+end
+STEP 8: Run Server
+rails server
+STEP 9: URLs
+http://localhost:3000/books
+http://localhost:3000/borrowers
+http://localhost:3000/borrowings
