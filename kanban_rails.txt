@@ -1,0 +1,60 @@
+STEP 1: Create Project
+rails new kanban_app
+cd kanban_app
+STEP 2: Generate Scaffold (MAIN MODEL)
+
+ One model is enough for Kanban:
+
+rails generate scaffold Task title:string description:text status:string
+
+ Status values:
+
+todo
+in_progress
+done
+STEP 3: Migrate
+rails db:migrate
+ STEP 4: Model (Validation)
+
+ app/models/task.rb
+
+class Task < ApplicationRecord
+  validates :title, presence: true
+  validates :status, inclusion: { in: %w[todo in_progress done] }
+end
+STEP 5: Controller (Already Created by Scaffold)
+
+✔ Contains:
+
+index
+show
+create
+update
+destroy
+
+ (CRUD already done )
+
+ STEP 6: Modify View for Kanban Layout
+
+ app/views/tasks/index.html.erb
+
+<h1>Kanban Board</h1>
+
+<h2>To Do</h2>
+<% @tasks.where(status: "todo").each do |task| %>
+  <p><%= task.title %></p>
+<% end %>
+
+<h2>In Progress</h2>
+<% @tasks.where(status: "in_progress").each do |task| %>
+  <p><%= task.title %></p>
+<% end %>
+
+<h2>Done</h2>
+<% @tasks.where(status: "done").each do |task| %>
+  <p><%= task.title %></p>
+<% end %>
+ STEP 7: Run Server
+rails server
+ STEP 8: Open Browser
+http://localhost:3000/tasks
