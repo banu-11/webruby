@@ -1,0 +1,64 @@
+STEP 1: Create Project
+rails new blog_app
+cd blog_app
+ STEP 2: Generate Scaffolds (ALL IN ONE)
+rails generate scaffold User name:string email:string
+rails generate scaffold Post title:string content:text user:references
+rails generate scaffold Comment content:text user:references post:references
+rails generate scaffold Category name:string
+rails generate scaffold Tag name:string
+
+ (Optional join for tags)
+
+rails generate model PostTag post:references tag:references
+ STEP 3: Enable Rich Text (IMPORTANT)
+rails action_text:install
+rails db:migrate
+STEP 4: Add Associations (ONLY EDIT STEP)
+ app/models/user.rb
+has_many :posts
+has_many :comments
+ app/models/post.rb
+belongs_to :user
+has_many :comments, dependent: :destroy
+
+has_rich_text :content   
+ app/models/comment.rb
+belongs_to :user
+belongs_to :post
+ app/models/category.rb
+has_many :posts
+app/models/tag.rb
+has_many :post_tags
+has_many :posts, through: :post_tags
+ app/models/post_tag.rb
+belongs_to :post
+belongs_to :tag
+ STEP 5: Update Routes
+
+config/routes.rb
+
+Rails.application.routes.draw do
+  resources :users
+  resources :posts do
+    resources :comments
+  end
+  resources :categories
+  resources :tags
+end
+ STEP 6: Show Comments in Post
+
+ app/views/posts/show.html.erb
+
+<h3>Comments:</h3>
+<% @post.comments.each do |comment| %>
+  <p><%= comment.content %> - by <%= comment.user.name %></p>
+<% end %>
+STEP 7: Run Server
+rails server
+STEP 8: URLs
+http://localhost:3000/users
+http://localhost:3000/posts
+http://localhost:3000/comments
+http://localhost:3000/categories
+http://localhost:3000/tags
