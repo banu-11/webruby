@@ -1,0 +1,155 @@
+STEP 1: Create Rails API App
+rails new currency_api --api
+cd currency_api
+ STEP 2: Generate Scaffold
+rails generate scaffold Conversion amount:decimal from_currency:string to_currency:string converted_amount:decimal
+ STEP 3: Run Migration
+rails db:migrate
+STEP 4: Add Custom Route (/convert)
+
+Open: config/routes.rb
+
+Rails.application.routes.draw do
+  resources :conversions do
+    collection do
+      post 'convert'
+    end
+  end
+end
+ STEP 5: Add Logic in Controller
+
+Open: app/controllers/conversions_controller.rb
+
+Add this method:
+
+def convert
+  amount = params[:amount].to_f
+  from = params[:from_currency]
+  to = params[:to_currency]
+
+  # Static exchange rates
+  rates = {
+    "USD" => 1.0,
+    "EUR" => 0.9,
+    "INR" => 83.0
+  }
+
+  if rates[from] && rates[to]
+    converted_amount = (amount / rates[from]) * rates[to]
+
+    render json: {
+      amount: amount,
+      from: from,
+      to: to,
+      converted_amount: converted_amount.round(2)
+    }
+  else
+    render json: { error: "Invalid currency" }, status: 422
+  end
+end 
+STEP 6: Start Server
+rails server
+ STEP 7: Test in Postman
+Method: POST
+URL:
+http://localhost:3000/conversions/convert
+Body → raw → JSON
+{
+  "amount": 100,
+  "from_currency": "USD",
+  "to_currency": "INR"
+}
+✅ OUTPUT
+{
+  "amount": 100,
+  "from": "USD",
+  "to": "INR",
+  "converted_amount": 8300.0
+}
+IMPORTANT (Exam Tip)
+
+If time is less, DO NOT use scaffold, instead use:
+
+rails generate controller conversions
+
+Because:
+
+Less code
+Faster
+No unnecessary CRUD
+ FINAL ANSWER (what to say if asked)
+
+✔ Yes, scaffold can be used
+✔ But better approach is controller-based API
+✔ Custom route + method is required
+
+If you want, I can also give you WITHOUT scaffold (simplest version – best for lab exams) 👍
+
+**WITHOUT scaffold (simplest version – best for lab exams)**
+
+yes please
+
+Here is the simplest version (WITHOUT scaffold) — best for lab exam ✅
+
+STEP 1: Create Rails API App
+rails new currency_api --api
+cd currency_api
+STEP 2: Generate Controller
+rails generate controller conversions
+STEP 3: Add Route
+
+Open config/routes.rb
+
+Rails.application.routes.draw do
+  post '/convert', to: 'conversions#convert'
+end
+ STEP 4: Write Logic in Controller
+
+Open app/controllers/conversions_controller.rb
+
+class ConversionsController < ApplicationController
+  def convert
+    amount = params[:amount].to_f
+    from = params[:from_currency]
+    to = params[:to_currency]
+
+    # Static exchange rates
+    rates = {
+      "USD" => 1.0,
+      "EUR" => 0.9,
+      "INR" => 83.0
+    }
+
+    if rates[from] && rates[to]
+      converted_amount = (amount / rates[from]) * rates[to]
+
+      render json: {
+        amount: amount,
+        from: from,
+        to: to,
+        converted_amount: converted_amount.round(2)
+      }
+    else
+      render json: { error: "Invalid currency" }, status: 422
+    end
+  end
+end
+ STEP 5: Start Server
+rails server
+STEP 6: Test in Postman
+Method: POST
+URL:
+http://localhost:3000/convert
+Body → raw → JSON:
+{
+  "amount": 100,
+  "from_currency": "USD",
+  "to_currency": "INR"
+}
+ OUTPUT
+{
+  "amount": 100,
+  "from": "USD",
+  "to": "INR",
+  "converted_amount": 8300.0
+}
